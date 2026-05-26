@@ -1,0 +1,52 @@
+# Modern dependency management (like build.gradle)
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ask_sg"
+version = "0.0.1"
+requires-python = ">=3.11"
+dependencies = [
+    # Web framework
+    "fastapi>=0.110,<1.0",
+    "uvicorn>=0.27,<1.0",
+
+    # Database
+    "sqlalchemy>=2.0,<3.0",
+    "psycopg2-binary>=2.9,<3.0",
+    "alembic>=1.13,<2.0",
+    "pgvector>=0.2,<1.0",
+
+    # Validation & config
+    "pydantic>=2.0,<3.0",
+    "pydantic-settings>=2.0,<3.0",
+    "python-dotenv>=1.0,<2.0",
+
+    # Data
+    "pandas>=2.0,<3.0",
+
+    # AI / Embeddings
+    "ollama>=0.2,<1.0",
+
+    # Utilities
+    "tqdm>=4.0,<5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "httpx>=0.27",
+    "ruff>=0.4",
+    "mypy>=1.9",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.fastapi]
+entrypoint = "main:app"
