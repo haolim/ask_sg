@@ -8,7 +8,8 @@ class Settings(BaseSettings):
     env: str = "production"
     ollama_base_url: str
     tavily_api_key: str
-    embedding_model: str
+    ollama_embedding_model: str
+    ollama_embedding_model_base_url: str
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

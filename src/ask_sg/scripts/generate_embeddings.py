@@ -10,6 +10,9 @@ from ask_sg.models.orm.resale_transactions import ResaleTransactions
 from ask_sg.models.orm.resale_transactions_embeddings import ResaleTransactionsEmbeddings
 from uuid import UUID
 
+# TODO(week-11): embedding_text belongs on the embeddings table — will break under multi-model re-embedding
+
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s"
@@ -46,72 +49,6 @@ def get_unembedded_ids(session: Session) -> list[UUID]:
         .filter(ResaleTransactionsEmbeddings.transaction_id.is_(None))
     )
     return list(session.scalars(stmt).all())
-
-# def iter_unembedded(session: Session, batch_size: int) -> Iterable[Sequence[ResaleTransactions]]:
-#     """Stream transactions that don't yet have an embedding for our target model.
-    
-#     Returns a Partitioned Results iterable using SQLAlchemy 2.0 style syntax.
-#     """
-#     # subquery = (
-#     #     select(ResaleTransactionsEmbeddings.transaction_id)
-#     #     .filter(ResaleTransactionsEmbeddings.embedding_model == OLLAMA_MODEL)
-#     #     # session.query(
-#     #     #     ResaleTransactionsEmbeddings.transaction_id
-#     #     # )
-#     #     # .filter(ResaleTransactionsEmbeddings.embedding_model == OLLAMA_MODEL)
-#     # )
-#     stmt = (
-#         select(ResaleTransactions)
-#         .outerjoin(
-#             ResaleTransactionsEmbeddings,
-#             (ResaleTransactions.id == ResaleTransactionsEmbeddings.transaction_id) &
-#             (ResaleTransactionsEmbeddings.embedding_model == OLLAMA_MODEL)
-#         )
-#         .filter(ResaleTransactions.embedding_text.isnot(None))
-#         #.filter(ResaleTransactions.id.notin_(subquery))
-#         # Checks where the joined embedding table has no match
-#         .filter(ResaleTransactionsEmbeddings.transaction_id.is_(None))
-#         .execution_options(yield_per=batch_size)
-#         #.limit(500)
-#     )
-#     return session.scalars(stmt).partitions()
-#     # return (
-#     #     session.query(ResaleTransactions)
-#     #     .filter(ResaleTransactions.embedding_text.isnot(None))
-#     #     .filter(ResaleTransactions.id.notin_(subquery))
-#     #     .yield_per(batch_size)
-#     #     )
-
-# def count_unembedded(session: Session) -> int:
-#     """Count transactions that don't yet have an embedding for our target model."""
-#     # subquery = (
-#     #     session.query(ResaleTransactionsEmbeddings.transaction_id)
-#     #     .filter(ResaleTransactionsEmbeddings.embedding_model == OLLAMA_MODEL)
-#     # )
-#     # return (
-#     #     session.query(ResaleTransactions)
-#     #     .filter(ResaleTransactions.embedding_text.isnot(None))
-#     #     .filter(ResaleTransactions.id.notin_(subquery))
-#     #     .count()
-#     # )
-#     # subquery = (
-#     #     select(ResaleTransactionsEmbeddings.transaction_id)
-#     #     .filter(ResaleTransactionsEmbeddings.embedding_model == OLLAMA_MODEL)
-#     # )
-#     stmt = (
-#         select(func.count(ResaleTransactions.id))
-#         .outerjoin(
-#             ResaleTransactionsEmbeddings,
-#             (ResaleTransactions.id == ResaleTransactionsEmbeddings.transaction_id) &
-#             (ResaleTransactionsEmbeddings.embedding_model == OLLAMA_MODEL)
-#         )
-#         .filter(ResaleTransactions.embedding_text.isnot(None))
-#         .filter(ResaleTransactionsEmbeddings.transaction_id.is_(None))
-#         #.filter(ResaleTransactions.id.notin_(subquery))
-#     )
-#     return session.scalar(stmt)
-#     # Modern 2.0 connection style execution for count scalar operations
-#     #return len(session.scalars(stmt).all())
 
 def main() -> None:
     client = Client()
@@ -160,38 +97,6 @@ def main() -> None:
         logger.info(f"Done. Success: {success_count:,}, Failed: {failure_count:,}")
     finally:
         session.close()
-
-
-    #     for idx, row in enumerate(tqdm(iter_unembedded(session, COMMIT_EVERY), 
-    #                                    total=total_remaining), start=1):
-    #         row_id = row.id
-    #         try:
-    #             vector = embed_text(client, row.embedding_text)
-    #             new_embedding = ResaleTransactionsEmbeddings(
-    #                 transaction_id = row_id,
-    #                 embedding = vector,
-    #                 embedding_model = OLLAMA_MODEL
-    #             )
-    #             session.add(new_embedding)
-    #             success_count += 1
-    #         except Exception as e:
-    #             logger.warning(f"Failed to embed row id={row.id}: {e}")
-    #             failure_count += 1
-    #             continue   
-
-    #         if idx % COMMIT_EVERY == 0:
-    #             session.commit()
-    #             session.expunge_all()
-    #             #logger.info(f"Committed batch at row {idx:,}")
-
-    #     session.commit()
-    #     session.expunge_all()
-    #     logger.info(
-    #         f"Done. Success: {success_count:,}, Failed: {failure_count:,}"
-    #     )
-    # finally:
-    #     session.close()
-
 
 if __name__ == "__main__":
     main()
