@@ -2,19 +2,22 @@
 # Receives HTTP requests, calls the service, returns HTTP responses.
 
 
-from fastapi import APIRouter
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, Depends
 from ask_sg.models.schemas.ask_api import Question, Answer
 from ask_sg.services.ask_service import get_answer
+from sqlalchemy.orm import Session
+from ask_sg.api.dependencies.db import get_db
+from ask_sg.api.dependencies.clients import get_ollama_client
+from ollama import Client
 
 router = APIRouter(
     prefix="/ask",
     tags=["Ask"]
 )
 
-@router.post("/", response_class=StreamingResponse)
-def post_question(question: Question):
-    return StreamingResponse(
-        get_answer(question.question),
-        media_type="text/plain"
-        )
+@router.post("/")
+async def post_question(question: Question, 
+                        db: Session = Depends(get_db),
+                        client: Client = Depends(get_ollama_client)
+                        ):
+    return await get_answer(question.question, db = db, client = client)
