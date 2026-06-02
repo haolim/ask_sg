@@ -10,6 +10,7 @@ from ask_sg.models.orm import ResaleTransactions
 # CSV -> pandas load -> pandas clean -> Pydantic -> SQLAlchemy -> DB
 #
 
+
 logger = logging.getLogger(__name__)
 start = time.time()
 # 1. Data load
