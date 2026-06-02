@@ -3,7 +3,7 @@
 # Talks to ORM.
 # No business logic, no HTTP
 
-
+"""TODO: Refactor to using latest SQLAlchemy 2.x - scalar/scalars"""
 from sqlalchemy.orm import Session
 from ask_sg.models.orm.resale_transactions import ResaleTransactions
 
