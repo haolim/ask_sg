@@ -16,14 +16,13 @@ async def tavily_search(query: str) -> str:
     target_domains = [
         "www.hdb.gov.sg", 
         "www.channelnewsasia.com", 
-        "www.straitstimes.com", 
-        "www.businesstimes.com.sg"
+        "www.straitstimes.com"
     ]
     tavily_client = AsyncTavilyClient(api_key=settings.tavily_api_key)
 
     response = await tavily_client.search(
         query=query, 
-        max_results=10,
+        max_results=3,
         include_domains=target_domains
         )
     return str(response)
@@ -35,12 +34,10 @@ web_llm_model_settings = ModelSettings(
 )
 
 web_llm_model = OllamaModel(
-    model_name="qwen3:14b",
+    model_name="gemma4:12b",
     provider=OllamaProvider(settings.ollama_base_url),
     settings=web_llm_model_settings
 )
-
-
 
 web_agent = Agent(
     model=web_llm_model,

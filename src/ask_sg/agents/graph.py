@@ -72,7 +72,6 @@ def build_graph(
     graph_builder.add_edge(
     "web_agent", END
     )
-
     
     return graph_builder.compile()
 
