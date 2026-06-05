@@ -1,5 +1,5 @@
 """
-agents/agent.py
+agents/rag_agent.py
 The tool in this file calls the repository function to get rows, then formats them.
 It doesn't contain SQL; it calls SQL.
 
@@ -27,22 +27,7 @@ qwen3_model = OllamaModel(
     settings=qwen3_model_settings
 )
 
-# gemma4 Model settings
-gemma4_model_settings = ModelSettings(
-    temperature=0.3,
-    top_p=0.95,
-    top_k=64,
-    max_tokens=2048 # Keep small to maximise speed
-)
-
-# gemma4 Model
-gemma4_model = OllamaModel(
-    model_name="gemma4:e4b",
-    provider=OllamaProvider(base_url=settings.ollama_base_url),
-    settings=gemma4_model_settings
-)
-
-agent = Agent(
+rag_agent = Agent(
     model=qwen3_model,
     deps_type=AgentDeps,
     instructions="""
@@ -56,7 +41,7 @@ agent = Agent(
     """
 )
 
-@agent.tool
+@rag_agent.tool
 def retrieve_from_database(
     ctx: RunContext[AgentDeps],
     query: str

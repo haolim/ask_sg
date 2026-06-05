@@ -1,93 +1,78 @@
 # State + nodes + route_by_intent + build_graph()
 from langgraph.graph import StateGraph, START, END
-from typing import TypedDict, Literal, Any
-from enum import Enum
-
-class UserIntent(Enum):
-    KNOWLEDGE_BASE = "search_vector_database"
-    WEB_SEARCH = "search_public_internet"
+from langgraph.graph.state import CompiledStateGraph
+from typing import TypedDict, Any, Callable
+from pydantic_ai import Agent
+from sqlalchemy.orm import Session
+from ollama import Client
+from ask_sg.agents.deps import AgentDeps
+from ask_sg.core.intent import UserIntent
 
 class State(TypedDict):
     user_prompt: str
     message_intent: UserIntent
-    retrieved_context: str
     llm_response: str
 
 
-def classify_intent_node(state: State) -> dict[str, Any]:
-    print("---CLASSIFY INTENT STEP---")
-    chosen_intent: UserIntent = UserIntent.KNOWLEDGE_BASE
-    print(chosen_intent.value)
-    return {"message_intent": chosen_intent}
+def build_graph(
+        classifier_agent: Agent[None, UserIntent],
+        rag_agent: Agent[AgentDeps, None],
+        web_search_agent: Agent[None, None],
+        session_factory: Callable[[], Session],
+        ollama_client: Client,
+        ) -> CompiledStateGraph:
+    
+    async def classify_intent_node(state: State) -> dict[str, Any]:
+        result = await classifier_agent.run(user_prompt=state["user_prompt"])
+        return {"message_intent": result.output}
+    
+    async def rag_agent_node(state: State) -> dict[str, Any]:
+        with session_factory() as sess:
+            current_deps = AgentDeps(
+                session=sess,
+                client=ollama_client
+            )
 
+            result = await rag_agent.run(
+                user_prompt=state["user_prompt"],
+                deps=current_deps
+            )      
+            return {"llm_response": result.output}
+        
+    async def web_search_agent_node(state: State) -> dict[str, Any]:
+        result = await web_search_agent.run(user_prompt=state["user_prompt"])
+        return {"llm_response": result.output}
 
-def rag_retrieval_node(state: State) -> dict[str, Any]:
-    return {"retrieved_context": "Context from Vector DB"}
+    def route_decision(state: State) -> UserIntent:
+        return state["message_intent"]
 
+    graph_builder = StateGraph(State)
 
-def web_search_node(state: State) -> dict[str, Any]:
-    return {"retrieved_context": "Context from Search"}
+    graph_builder.add_node(
+        "classify_intent", classify_intent_node
+    )
+    graph_builder.add_node(
+        "rag_agent", rag_agent_node
+    )
+    graph_builder.add_node(
+        "web_agent", web_search_agent_node
+    )
+    graph_builder.add_edge(
+        START, "classify_intent"
+    )
+    graph_builder.add_conditional_edges(
+        "classify_intent",
+            route_decision,
+            {UserIntent.KNOWLEDGE_BASE: "rag_agent",
+             UserIntent.WEB_SEARCH: "web_agent"}
+    )
+    graph_builder.add_edge(
+        "rag_agent", END
+    )
+    graph_builder.add_edge(
+    "web_agent", END
+    )
 
-
-def generate_response_node(state: State) -> dict[str, Any]:
-    return {"llm_response": "Resposne from LLM"}
-
-def route_decision(state: State) -> Literal["rag_retrieval", "web_search"]:
-    print("---ROUTING DECISION---")
-    if state["message_intent"] == UserIntent.KNOWLEDGE_BASE:
-        print("rag_retrieval")
-        return "rag_retrieval"
-    print("web search")
-    return "web_search"
-
-
-graph_builder = StateGraph(State)
-
-graph_builder.add_node(
-    "classify_intent", classify_intent_node
-)
-graph_builder.add_node(
-    "rag_retrieval", rag_retrieval_node
-)
-graph_builder.add_node(
-    "web_search", web_search_node
-)
-graph_builder.add_node(
-    "generate_response", generate_response_node
-)
-graph_builder.add_edge(
-    START, "classify_intent"
-)
-graph_builder.add_conditional_edges(
-    "classify_intent",
-        route_decision
-)
-graph_builder.add_edge(
-    "rag_retrieval", "generate_response"
-)
-graph_builder.add_edge(
-   "web_search", "generate_response"
-)
-graph_builder.add_edge(
-    "generate_response", END
-)
-
-graph = graph_builder.compile()
-
-result = graph.invoke(
-    {"user_prompt": "Show me some recent HDB resale transactions for the town 'Tampines'"}
-)
-print(*(f"{k}: {v}" for k, v in result.items()))
-
-try:
-    # Generate the PNG binary data using the Mermaid API
-    png_data = graph.get_graph().draw_mermaid_png()
-
-    # Write the binary data to a file
-    with open("langgraph_graph_output.png", "wb") as f:
-        f.write(png_data)
-    print("Successfully saved graph as langgraph_graph_output.png")
-
-except Exception as e:
-    print(f"Could not generate PNG: {e}")
+    
+    return graph_builder.compile()
 
