@@ -13,22 +13,22 @@ from ask_sg.repositories.agent_repo import get_embedding_rows
 from ask_sg.core.config import settings
 from ask_sg.integrations.embedding import embed_text
 
-#qwen3 Model settings
-qwen3_model_settings = ModelSettings(
+#RAG Model settings
+rag_model_settings = ModelSettings(
     temperature=0.6,
     top_k=20,
     top_p=0.95
 )
 
-# qwen3 Model
-qwen3_model = OllamaModel(
-    model_name="qwen3:14b",
+# RAG Model
+rag_model = OllamaModel(
+    model_name="gemma4:12b",
     provider=OllamaProvider(base_url=settings.ollama_base_url),
-    settings=qwen3_model_settings
+    settings=rag_model_settings
 )
 
 rag_agent = Agent(
-    model=qwen3_model,
+    model=rag_model,
     deps_type=AgentDeps,
     instructions="""
     You answer questions about Singapore HDB resale flats. Use the retrieve_from_database tool

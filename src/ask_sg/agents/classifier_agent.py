@@ -10,7 +10,7 @@ classifier_model_settings = ModelSettings(
 )
 
 classifier_model = OllamaModel(
-    model_name="gemma4:e2b",
+    model_name="gemma4:e4b",
     provider=OllamaProvider(settings.ollama_base_url),
     settings=classifier_model_settings
 )
@@ -22,12 +22,11 @@ classifier_agent = Agent(
     You are a highly precise intent classification agent for a Singapore Housing (HDB) assistant.
     Your sole task is to analyze the user's query and classify it into exactly one of the permitted intents.
 
-    Available Intents:
-    1. {UserIntent.KNOWLEDGE_BASE.value}: Use this for any queries regarding historical HDB transaction data, past resale prices, historical trends, or statistical analysis of past property data.
-    2. {UserIntent.WEB_SEARCH.value}: Use this for queries about current news, latest BTO launch updates, new or upcoming housing policies, live interest rates, eligibility criteria changes, or any real-time data.
+    Permitted Intents:
+    {UserIntent.KNOWLEDGE_BASE.value}: Use this for queries regarding historical HDB transaction data, past resale prices of past property data.
+    {UserIntent.WEB_SEARCH.value}: Use this for queries about current news, latest BTO launch updates, new or upcoming housing policies, live interest rates, eligibility criteria changes, or any real-time data.
 
     Rules:
-    - If a query involves both, prioritize WEB_SEARCH if it requires up-to-date policy context to answer accurately.
-    - Do not answer the query. Only determine the intent.
+    Only determine the intent. Do not answer the query.
     """
 )
