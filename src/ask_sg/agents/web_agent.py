@@ -34,7 +34,7 @@ web_llm_model_settings = ModelSettings(
 )
 
 web_llm_model = OllamaModel(
-    model_name="gemma4:12b",
+    model_name="qwen3.5:9b",
     provider=OllamaProvider(settings.ollama_base_url),
     settings=web_llm_model_settings
 )

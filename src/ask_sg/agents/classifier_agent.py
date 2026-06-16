@@ -10,7 +10,7 @@ classifier_model_settings = ModelSettings(
 )
 
 classifier_model = OllamaModel(
-    model_name="gemma4:e4b",
+    model_name="qwen3.5:9b",
     provider=OllamaProvider(settings.ollama_base_url),
     settings=classifier_model_settings
 )
