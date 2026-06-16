@@ -21,15 +21,16 @@ rather than in the model's own recall.
 - [x] PostgreSQL schema (`resale_transactions`) with the pgvector extension; migrations managed with Alembic
 - [x] Bulk ingestion pipeline loading the public HDB resale dataset, with malformed rows logged rather than halting the run
 - [x] FastAPI backend — `/health`, `/transactions` (paginated JSON), and `/ask`; interactive docs via Swagger UI at `/docs`
-- [x] `/ask` connected to a local LLM (Ollama) returning a streamed response
+- [x] Local LLM via Ollama
 - [x] Embeddings generated for the dataset and stored in pgvector; top-5 similarity search returns relevant rows for a test question
-- [x] Full RAG chain wired into `/ask` — a question retrieves relevant rows and the LLM returns an answer grounded in those rows (orchestrated with Pydantic AI)
+- [x] Full RAG chain wired into `/ask` — a question retrieves relevant rows and the LLM returns an answer grounded in those rows (orchestrated with Pydantic AI).
+- [x] `/ask` wired to the agents and streamed over Server-Sent-Events (SSE), including lifecycle events (`node_start`, `node_end`, `token`, `error`)
 
 ## In progress / planned
 
-- [ ] Intent-routing agent — classify a question and route it to RAG or web search (LangGraph)
+- [ ] Conversation memory so `/ask` retains context across turns (LangGraph `MemorySaver` via `RunnableConfig`)
 - [ ] Route the agent through `/ask` with conversation state
-- [ ] Evaluation suite — a small golden Q&A set scored for faithfulness and relevancy (RAGAS)
+- [ ] Evaluation suite — a small golden Q&A set scored for faithfulness and relevancy (RAGAS); also to verify answer grounding
 - [ ] Containerisation (Docker) and deployment (Railway backend, Vercel frontend)
 - [ ] Web frontend (Next.js)
 
