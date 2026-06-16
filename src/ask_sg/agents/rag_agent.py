@@ -22,7 +22,7 @@ rag_model_settings = ModelSettings(
 
 # RAG Model
 rag_model = OllamaModel(
-    model_name="gemma4:12b",
+    model_name="qwen3.5:9b",
     provider=OllamaProvider(base_url=settings.ollama_base_url),
     settings=rag_model_settings
 )
