@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from ask_sg.api.dependencies.db import get_db
 from ask_sg.api.dependencies.clients import get_ollama_client
 from ollama import Client
-from collections.abc import AsyncIterable
+from typing import AsyncIterable
 
 router = APIRouter(
     prefix="/ask",
