@@ -2,7 +2,7 @@
 # Receives HTTP requests, calls the service, returns HTTP responses.
 
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header
 from fastapi.sse import ServerSentEvent, EventSourceResponse
 from ask_sg.models.schemas.ask_api import Question, Answer
 from ask_sg.services.ask_service import stream_answer
@@ -11,6 +11,7 @@ from ask_sg.api.dependencies.db import get_db
 from ask_sg.api.dependencies.clients import get_ollama_client
 from ollama import Client
 from typing import AsyncIterable
+from uuid import uuid4
 
 router = APIRouter(
     prefix="/ask",
@@ -20,10 +21,12 @@ router = APIRouter(
 @router.post("/", response_class=EventSourceResponse)
 async def post_question(question: Question, 
                         db: Session = Depends(get_db),
-                        client: Client = Depends(get_ollama_client)
+                        client: Client = Depends(get_ollama_client),
+                        session_id: str = Header(default=None)
                         ) -> AsyncIterable[ServerSentEvent]:
+        thread_id = session_id or str(uuid4())
         try:
-            async for event_dict in stream_answer(question=question.question, db=db, client=client):
+            async for event_dict in stream_answer(question=question.question, db=db, client=client, thread_id=thread_id):
                 # Take a shallow copy of the data to prevent mutation
                 payload = event_dict.copy()
                 # Remove the type from the paylod and assign to a variable
