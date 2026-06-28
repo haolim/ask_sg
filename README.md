@@ -25,18 +25,17 @@ rather than in the model's own recall.
 - [x] Embeddings generated for the dataset and stored in pgvector; top-5 similarity search returns relevant rows for a test question
 - [x] Full RAG chain wired into `/ask` — a question retrieves relevant rows and the LLM returns an answer grounded in those rows (orchestrated with Pydantic AI).
 - [x] `/ask` wired to the agents and streamed over Server-Sent-Events (SSE), including lifecycle events (`node_start`, `node_end`, `token`, `error`)
-
+- [x] Conversation memory so `/ask` retains context across turns (LangGraph `MemorySaver` via `RunnableConfig`)
+- [x] Route the agent through `/ask` with conversation state
+- [x] Evaluation suite — a small golden Q&A set scored for faithfulness and relevancy (RAGAS); also to verify answer grounding
 ## In progress / planned
-
-- [ ] Conversation memory so `/ask` retains context across turns (LangGraph `MemorySaver` via `RunnableConfig`)
-- [ ] Route the agent through `/ask` with conversation state
-- [ ] Evaluation suite — a small golden Q&A set scored for faithfulness and relevancy (RAGAS); also to verify answer grounding
 - [ ] Containerisation (Docker) and deployment (Railway backend, Vercel frontend)
+- [ ] Persistent conversation memory across restarts ('AsyncPostgresSaver')
 - [ ] Web frontend (Next.js)
 
 ## Stack
 
-Python · FastAPI · Pydantic · Pydantic AI · SQLAlchemy · Alembic · PostgreSQL · pgvector · Ollama (`nomic-embed-text`)
+Python · FastAPI · Pydantic · Pydantic AI · LangGraph · SQLAlchemy · Alembic · PostgreSQL · pgvector · Ollama (`nomic-embed-text` embeddings, `qwen2.5:14b` eval judge) · RAGAS · pytest
 
 ## Data source
 
