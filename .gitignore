@@ -64,7 +64,10 @@ coverage.xml
 *.lcov
 .pytest_cache/
 cover/
- 
+/tests/evals/test_boundary.py
+/tests/evals/test_faithfulness.py
+/tests/evals/test_judge_smoke.py
+/tests/evals/test_precise_filter.py
  
 # -----------------------------------------------------------------------------
 # Type checkers
