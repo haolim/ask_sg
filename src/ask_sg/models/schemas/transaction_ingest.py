@@ -48,15 +48,17 @@ class HDBResaleTransaction(BaseModel):
             raise ValueError(f'invalid remaining lease detected: {v}')
         return v
     
-
+    #TODO: Add flat model, block, 
     def to_embedding_text(self) -> str:
         month_name = calendar.month_name[self.sold_month]
         return (
             f"{self.flat_type} flat located in {self.town} town, "
-            f"at {self.street_name}. "
+            f"at street {self.street_name} and block {self.block}. "
+            f"The flat model is {self.flat_model}. "
             f"Floor area is {self.floor_area_sqm} sqm. "
             f"Storey range: {self.storey_range}. "
             f"Sold in {month_name} {self.sold_year} for S${self.resale_price:,}. "
+            f"Lease commenced in {self.lease_commence_year}. "
             f"Remaining lease: {self.remaining_lease_year} years {self.remaining_lease_month} months."
         )
     
