@@ -23,7 +23,7 @@ GOLDEN_SET: list[GoldenPair] = [
         user_input="What was the resale price of a 5-room flat located in Bishan Street 23 and sold in February of 2025?",
         reference="$1,105,000",
         kind="precise_filter",
-        unique_markers=("1150000",),
+        unique_markers=("1,105,000",),
     ),
     GoldenPair(
         id="q3_queenstown_5room_floor_area_storey_level",
