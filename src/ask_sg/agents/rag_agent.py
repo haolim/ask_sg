@@ -14,8 +14,9 @@ from ask_sg.core.config import settings
 from ask_sg.integrations.embedding import embed_text
 
 #RAG Model settings
+#TODO(config): extract ModelSettings to be injectable config (allow different production temp and eval temp)
 rag_model_settings = ModelSettings(
-    temperature=0.6,
+    temperature=0.0,
     top_k=20,
     top_p=0.95
 )
@@ -32,8 +33,11 @@ rag_agent = Agent(
     deps_type=AgentDeps,
     instructions="""
     You answer questions about Singapore HDB resale flats. Use the retrieve_from_database tool
-    to fetch relevant transactions, and base your answer ONLY on the data it returns. If
-    the tool returns nothing relevant, say you don't have enough information to answer.
+    to fetch relevant transactions, and base your answer ONLY on the data returned.
+     
+    Do not add any observations and do not reformat the listing. 
+    
+    If the tool returns nothing relevant, say you don't have enough information to answer.
     
     If the question requires aggregation (averages, counts, totals) or exact filtering that
     the available tools cannot perform, say you cannot answer that type of question yet -
@@ -62,5 +66,8 @@ def retrieve_from_database(
         embedding_model=settings.ollama_embedding_model,
         query_vector=query_vector,
     )
+    # .extend as agent may loop and we want to append elements to existing list
+    # as an iterable so that it is flattened and not a list of lists
+    ctx.deps.retrieved.extend(rows)
     return "\n".join(rows)
     
