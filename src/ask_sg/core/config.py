@@ -1,6 +1,7 @@
 # Environment settings
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pathlib import Path
 
 # Environment settings
 class Settings(BaseSettings):
@@ -11,7 +12,7 @@ class Settings(BaseSettings):
     ollama_embedding_model: str
     ollama_embedding_model_base_url: str
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=Path(__file__).resolve().parent.parent.parent.parent / ".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore"
