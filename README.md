@@ -1,4 +1,4 @@
-# Ask Singapore (`ask_sg`)
+# Ask Singapore ('ask_sg')
 
 *A self-directed project building a retrieval-augmented generation (RAG) backend over Singapore HDB resale data.*
 
@@ -18,24 +18,23 @@ rather than in the model's own recall.
 ## Working now
 
 - [x] HDB resale dataset explored and modelled with typed Pydantic schemas
-- [x] PostgreSQL schema (`resale_transactions`) with the pgvector extension; migrations managed with Alembic
+- [x] PostgreSQL schema ('resale_transactions') with the pgvector extension; migrations managed with Alembic
 - [x] Bulk ingestion pipeline loading the public HDB resale dataset, with malformed rows logged rather than halting the run
-- [x] FastAPI backend — `/health`, `/transactions` (paginated JSON), and `/ask`; interactive docs via Swagger UI at `/docs`
+- [x] FastAPI backend — '/health', '/transactions' (paginated JSON), and '/ask'; interactive docs via Swagger UI at '/docs'
 - [x] Local LLM via Ollama
 - [x] Embeddings generated for the dataset and stored in pgvector; top-5 similarity search returns relevant rows for a test question
-- [x] Full RAG chain wired into `/ask` — a question retrieves relevant rows and the LLM returns an answer grounded in those rows (orchestrated with Pydantic AI).
-- [x] `/ask` wired to the agents and streamed over Server-Sent-Events (SSE), including lifecycle events (`node_start`, `node_end`, `token`, `error`)
-- [x] Conversation memory so `/ask` retains context across turns (LangGraph `MemorySaver` via `RunnableConfig`)
-- [x] Route the agent through `/ask` with conversation state
+- [x] Full RAG chain wired into '/ask' — a question retrieves relevant rows and the LLM returns an answer grounded in those rows (orchestrated with Pydantic AI).
+- [x] '/ask' wired to the agents and streamed over Server-Sent-Events (SSE), including lifecycle events ('node_start', 'node_end', 'token', 'error')
+- [x] Conversation memory so '/ask' retains context across turns (LangGraph 'MemorySaver' via 'RunnableConfig')
+- [x] Route the agent through '/ask' with conversation state
 - [x] Evaluation suite — a small golden Q&A set scored for faithfulness and relevancy (RAGAS); also to verify answer grounding
 ## In progress / planned
-- [ ] Containerisation (Docker) and deployment (Railway backend, Vercel frontend)
-- [ ] Persistent conversation memory across restarts ('AsyncPostgresSaver')
-- [ ] Web frontend (Next.js)
+- [ ] Containerisation (Docker) and deployment (Railway backend)
+- [ ] Web frontend (Next.js), deployed to Vercel
 
 ## Stack
 
-Python · FastAPI · Pydantic · Pydantic AI · LangGraph · SQLAlchemy · Alembic · PostgreSQL · pgvector · Ollama (`nomic-embed-text` embeddings, `qwen2.5:14b` eval judge) · RAGAS · pytest
+Python · FastAPI · Pydantic · Pydantic AI · LangGraph · SQLAlchemy · Alembic · PostgreSQL · pgvector · Ollama ('nomic-embed-text' embeddings, 'qwen2.5:14b' eval judge) · RAGAS · pytest
 
 ## Data source
 
