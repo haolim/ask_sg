@@ -20,6 +20,21 @@ ollama pull qwen2.5:14b
 ollama pull qwen3.5:9b
 ```
 
+Image is published on Docker Hub. 
+
+To pull image directly:
+
+```bash
+docker pull hipythea/ask_sg:0.1.0
+```
+
+Else, to use the pre-built image, in `docker-compose.yml`, update services to reference:
+```yaml
+image: hipythea/ask_sg:0.1.0
+```
+
+Then use the command `docker compose up` to pull the image
+
 ## 1. Configure environment
 
 Copy the example env file and fill in your values:
