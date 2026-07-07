@@ -36,6 +36,36 @@ GOLDEN_SET: list[GoldenPair] = [
         id="q4_recent_5room_transactions",
         user_input="What are some recent 5-room resale transactions sold in 2025?",
         reference="Recent 5-room transactions include flats sold in Bishan, Ang Mo Kio, and Marine Parade",
+        kind="boundary",
+    ),
+    GoldenPair(
+        id="q5_maisonette_serangoon",
+        user_input="Show me executive maisonette flats in Serangoon",
+        reference="Executive maisonette flats located in Serangoon town, typically 140-160 sqm with the Maisonette flat model",
+        kind="retrieval",
+    ),
+    GoldenPair(
+        id="q6_high_floor_central",
+        user_input="high-floor flats near the city centre",
+        reference="Flats in Central Area town on higher storey ranges such as 16 TO 18 or above",
+        kind="retrieval",
+    ),
+    GoldenPair(
+        id="q7_premium_apartment_bukit_panjang",
+        user_input="premium apartment flats in Bukit Panjang",
+        reference="5-room Premium Apartment flats in Bukit Panjang town along Senja Road",
+        kind="retrieval",
+    ),
+    GoldenPair(
+        id="q8_large_family_flat_bishan",
+        user_input="spacious family flat in Bishan",
+        reference="Larger 4-room and 5-room flats in Bishan town suitable for families, around 84-123 sqm",
+        kind="retrieval",
+    ),
+    GoldenPair(
+        id="q9_new_generation_hougang",
+        user_input="New Generation flats in Hougang",
+        reference="New Generation model flats in Hougang town, commonly 4-room around 105 sqm",
         kind="retrieval",
     ),
 ]
