@@ -29,12 +29,16 @@ dependencies = [
     # AI / Embeddings
     "ollama>=0.2,<1.0",
     "pydantic-ai>=1.1,<2.0",
+    "tavily-python>=0.7,<1.0",
+
+    # Orchestration
+    "langgraph>=1.0,<2.0",
 
     # Utilities
     "tqdm>=4.0,<5.0",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
@@ -53,9 +57,6 @@ where = ["src"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-
-[tool.fastapi]
-entrypoint = "main:app"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
