@@ -20,11 +20,11 @@ def get_embedding_rows(
     distance = ResaleTransactionsEmbeddings.embedding.cosine_distance(query_vector).label("distance")
     stmt = (
         select(
-            ResaleTransactions.embedding_text
+            ResaleTransactionsEmbeddings.embedding_text
         )
         .join(
-            ResaleTransactionsEmbeddings,
-            ResaleTransactions.id == ResaleTransactionsEmbeddings.transaction_id
+            ResaleTransactions,
+            ResaleTransactionsEmbeddings.transaction_id == ResaleTransactions.id
         )
         .where(
             ResaleTransactionsEmbeddings.embedding_model == embedding_model
