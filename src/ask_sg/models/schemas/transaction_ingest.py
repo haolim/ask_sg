@@ -48,7 +48,6 @@ class HDBResaleTransaction(BaseModel):
             raise ValueError(f'invalid remaining lease detected: {v}')
         return v
     
-    #TODO: Add flat model, block, 
     def to_embedding_text(self) -> str:
         month_name = calendar.month_name[self.sold_month]
         return (

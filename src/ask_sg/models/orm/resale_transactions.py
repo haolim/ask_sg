@@ -30,8 +30,6 @@ class ResaleTransactions(Base):
     remaining_lease_year: Mapped[int] = mapped_column()
     remaining_lease_month: Mapped[int] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    #TODO: Move embedding_text to resale_transactions_embeddings table
-    embedding_text: Mapped[str] = mapped_column()
 
     # Relationship to ResaleTransactionsEmbedding - One-to-Many (one transaction has MANY embeddings)
     embeddings: Mapped[list["ResaleTransactionsEmbeddings"]] = relationship(back_populates="transaction", cascade="all, delete-orphan")

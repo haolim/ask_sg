@@ -1,17 +1,16 @@
 """Generate embeddings for resale transactions and store in pgvector column"""
 import logging
-from typing import Iterable, Sequence
 from ollama import Client
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from tqdm import tqdm
 from ask_sg.core.database import SessionLocal
 from ask_sg.models.orm.resale_transactions import ResaleTransactions
 from ask_sg.models.orm.resale_transactions_embeddings import ResaleTransactionsEmbeddings
 from uuid import UUID
-
-# TODO(week-11): embedding_text belongs on the embeddings table — will break under multi-model re-embedding
-
+import os
+from ask_sg.models.schemas.transaction_ingest import HDBResaleTransaction
+from ask_sg.core.config import settings
 
 logging.basicConfig(
     level=logging.INFO,
@@ -42,16 +41,14 @@ def get_unembedded_ids(session: Session) -> list[UUID]:
         select(ResaleTransactions.id)
         .outerjoin(
             ResaleTransactionsEmbeddings,
-            (ResaleTransactions.id == ResaleTransactionsEmbeddings.transaction_id) &
-            (ResaleTransactionsEmbeddings.transaction_id.is_(None))
+            (ResaleTransactions.id == ResaleTransactionsEmbeddings.transaction_id)
         )
-        .filter(ResaleTransactions.embedding_text.isnot(None))
         .filter(ResaleTransactionsEmbeddings.transaction_id.is_(None))
     )
     return list(session.scalars(stmt).all())
 
 def main() -> None:
-    client = Client()
+    client = Client(host=settings.ollama_embedding_model_base_url)
     session = SessionLocal()
 
     ids_to_process = get_unembedded_ids(session)
@@ -71,11 +68,13 @@ def main() -> None:
             for idx, row_id in enumerate(ids_to_process, start=1):
                 try:
                     row = session.get(ResaleTransactions, row_id)
-                    vector = embed_text(client, row.embedding_text)
+                    txn_model = HDBResaleTransaction.model_validate(row, from_attributes=True)
+                    vector = embed_text(client, txn_model.embedding_text)
                     new_embedding = ResaleTransactionsEmbeddings(
                         transaction_id = row_id,
                         embedding = vector,
-                        embedding_model = OLLAMA_MODEL
+                        embedding_model = OLLAMA_MODEL,
+                        embedding_text = txn_model.embedding_text
                     )
                     session.add(new_embedding)
                     success_count += 1
