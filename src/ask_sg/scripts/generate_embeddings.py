@@ -8,7 +8,6 @@ from ask_sg.core.database import SessionLocal
 from ask_sg.models.orm.resale_transactions import ResaleTransactions
 from ask_sg.models.orm.resale_transactions_embeddings import ResaleTransactionsEmbeddings
 from uuid import UUID
-import os
 from ask_sg.models.schemas.transaction_ingest import HDBResaleTransaction
 from ask_sg.core.config import settings
 
