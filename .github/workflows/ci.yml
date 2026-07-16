@@ -8,3 +8,17 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - run: echo "actions is alive on ${{ github.sha }}"
+
+name: connectivity-check
+on:
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+    - name: ping ollama
+      run: curl -sf "${{ secrets.OLLAMA_TUNNEL_URL }}/api/tags"
+    - name: ping postgres
+      run: |
+        sudo apt-get install -y postgresql-client
+        pg_isready -d "${{ secrets.DATABASE_TUNNEL_URL }}"
