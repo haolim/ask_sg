@@ -3,8 +3,17 @@ on:
   push:
     branches: [main]
 jobs:
-  smoke:
+  eval: 
+    name: RAGAS Test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v7
-    - run: echo "actions is alive on ${{ github.sha }}"
+    - name: Install uv
+      uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990
+    - name: Install dependencies
+      run: uv sync --frozen
+    - name: Test with pytest
+      env:
+        OLLAMA_BASE_URL: ${{ secrets.OLLAMA_TUNNEL_URL }}
+        DATABASE_URL: ${{ secrets.DATABASE_TUNNEL_URL }}
+      run: uv run pytest tests/evals/test_golden_set.py
