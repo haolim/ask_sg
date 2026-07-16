@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ping ollama
-        run: 'curl -sf -H "ngrok-skip-browser-warning: true" "${{ secrets.OLLAMA_TUNNEL_URL }}/api/tags"'
+        run: 'curl -sfL -H "ngrok-skip-browser-warning: true" "${{ secrets.OLLAMA_TUNNEL_URL }}/api/tags"'
       - name: ping postgres
         run: |
           sudo apt-get install -y postgresql-client
