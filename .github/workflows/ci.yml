@@ -14,7 +14,7 @@ jobs:
       run: uv sync --frozen
     - name: Test with pytest
       env:
-        OLLAMA_BASE_URL: ${{ secrets.OLLAMA_TUNNEL_URL }}
+        OLLAMA_BASE_URL: ${{ secrets.OLLAMA_TUNNEL_URL }}/v1
         DATABASE_URL: ${{ secrets.DATABASE_TUNNEL_URL }}
         OLLAMA_EMBEDDING_MODEL_BASE_URL: ${{ secrets.OLLAMA_EMBEDDING_MODEL_BASE_URL }}
         OLLAMA_EMBEDDING_MODEL: ${{ secrets.OLLAMA_EMBEDDING_MODEL }}
