@@ -2,6 +2,9 @@ name: ci
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      # - 'docs/**'
 jobs:
   eval: 
     name: RAGAS Test
@@ -20,3 +23,14 @@ jobs:
         OLLAMA_EMBEDDING_MODEL: ${{ secrets.OLLAMA_EMBEDDING_MODEL }}
         TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
       run: uv run pytest tests/evals/test_golden_set.py
+  deploy:
+    needs: eval
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Railway CLI
+        run: npm i -g @railway/cli
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: railway up --service acb10455-8a55-453f-8759-0185bec2e839
