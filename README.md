@@ -28,13 +28,16 @@ rather than in the model's own recall.
 - [x] Conversation memory so '/ask' retains context across turns (LangGraph 'MemorySaver' via 'RunnableConfig')
 - [x] Route the agent through '/ask' with conversation state
 - [x] Evaluation suite — a small golden Q&A set scored for faithfulness and relevancy (RAGAS); also to verify answer grounding
+- [x] ngrok tunnel - inference (Ollama) and vector store runs locally
+- [x] CI/CD - GitHub Actions runs the RAGAS golden set on every push to main; on passing tests, it deploys to Railway
+- [x] Containerisation (Docker) and deployment (Railway backend)
+
 ## In progress / planned
-- [ ] Containerisation (Docker) and deployment (Railway backend)
 - [ ] Web frontend (Next.js), deployed to Vercel
 
 ## Stack
 
-Python · FastAPI · Pydantic · Pydantic AI · LangGraph · SQLAlchemy · Alembic · PostgreSQL · pgvector · Ollama ('nomic-embed-text' embeddings, 'qwen2.5:14b' eval judge) · RAGAS · pytest
+Python · FastAPI · Pydantic · Pydantic AI · LangGraph · SQLAlchemy · Alembic · PostgreSQL · pgvector · Ollama ('nomic-embed-text' embeddings, 'qwen3.5:9b' as model, 'qwen2.5:14b' eval judge) · RAGAS · pytest · Docker · GitHub Actions · Railway · ngrok
 
 ## Data source
 
