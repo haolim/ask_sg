@@ -1,5 +1,6 @@
-"use client";
+"use client"
 import { useState } from "react";
+import ChatInput from "./ChatInput";
 
 type Message = {
   text: string;
@@ -43,19 +44,5 @@ function MessageBubble( {text, role}: {text: string; role: string}) {
   );
 }
 
-function ChatInput({ inputText, 
-  onInputTextChange,
-  onSend }: {inputText: string; onInputTextChange: (value: string) => void; onSend: (value: string) => void }) {
-  return (
-    <div>
-      <input type="text"
-      value={inputText}
-      placeholder="Ask about HDB resale..."
-      onChange={ (e) => onInputTextChange(e.target.value)}/>
-      <button onClick={() => onSend(inputText)}>
-        Send!
-      </button>
-    </div>
-  );
-}
+
 
