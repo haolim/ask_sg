@@ -16,7 +16,6 @@ async def stream_answer(question: str,
                thread_id: str
                ) -> AsyncIterable[dict[str, Any]]:
     deps = AgentDeps(session=db, client=client)
-
     async for chunk in GRAPH_SINGLETON.astream(
         {"user_prompt": question},
         config={"configurable": {"deps": deps, "thread_id": thread_id}},
