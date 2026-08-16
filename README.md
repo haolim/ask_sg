@@ -24,7 +24,7 @@ rather than in the model's own recall.
 - [x] Local LLM via Ollama
 - [x] Embeddings generated for the dataset and stored in pgvector; top-5 similarity search returns relevant rows for a test question
 - [x] Full RAG chain wired into '/ask' — a question retrieves relevant rows and the LLM returns an answer grounded in those rows (orchestrated with Pydantic AI).
-- [x] '/ask' wired to the agents and streamed over Server-Sent-Events (SSE), including lifecycle events ('node_start', 'node_end', 'token', 'error')
+- [x] '/ask' wired to the agents and streamed over Server-Sent-Events (SSE) in the Vercel AI SDK data-stream format ('text-start', 'text-delta', 'text-end', 'error')
 - [x] Conversation memory so '/ask' retains context across turns (LangGraph 'MemorySaver' via 'RunnableConfig')
 - [x] Route the agent through '/ask' with conversation state
 - [x] Evaluation suite — a small golden Q&A set scored for faithfulness and relevancy (RAGAS); also to verify answer grounding
