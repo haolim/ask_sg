@@ -31,9 +31,11 @@ rather than in the model's own recall.
 - [x] ngrok tunnel - inference (Ollama) and vector store runs locally
 - [x] CI/CD - GitHub Actions runs the RAGAS golden set on every push to main; on passing tests, it deploys to Railway
 - [x] Containerisation (Docker) and deployment (Railway backend)
+- [x] Web frontend (Next.js) - simple chat UI streaming response from '/ask' via Vercel AI SDK ('useChat')
 
 ## In progress / planned
-- [ ] Web frontend (Next.js), deployed to Vercel
+- [ ] Hybrid search - semantic vector search combined with SQL filters (aggregation) and cross-encoder reranking
+- [ ] Frontend deployed to Vercel
 
 ## Stack
 
