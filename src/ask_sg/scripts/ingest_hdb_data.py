@@ -6,9 +6,18 @@ from ask_sg.models.schemas.transaction_ingest import HDBResaleTransaction
 from ask_sg.core.database import engine
 from sqlalchemy import insert
 from ask_sg.models.orm import ResaleTransactions
+# Note: Empty the tables (resale_transactions_embeddings and then resale_transactions)
+# before running this ingestion script to avoid duplicate entries.
+# Then run generate_embeddings.py again afterwards.
 # Flow
 # CSV -> pandas load -> pandas clean -> Pydantic -> SQLAlchemy -> DB
-#
+# TODO(ingestion): 
+# 1. Write rejected rows to a CSV file (row + error) - used to improve the pipeline.
+# 2. Keep track of error rate and stop if it passes a threshold. 
+#   A threshold depends on what a missing row costs.
+#   e.g. a transaction ledger threshold would be zero because a missing row causes financial discrepancies.
+#   A missing transaction row in HDB resale transactions barely changes an answer.
+#   A small rate is acceptable here and will be set from the reject rate of a normal run.
 
 
 logger = logging.getLogger(__name__)
