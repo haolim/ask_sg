@@ -1,24 +1,13 @@
-# TECH DEBT — Known issues, deferred intentionally (Wk 4)
-#
-# 1. calc_remaining_lease is called before validate_month_format in clean().
-#    If a malformed month exists, it will crash before the validator runs.
-#    Fix: swap the order — validate first, then calculate.
-#
-# 2. The 'NaN' string check in calc_remaining_lease is a code smell.
-#    The CSV likely has literal "NaN" text in some cells.
-#    Fix: use pd.read_csv(..., na_values=['NaN']) at load time.
-#
-# 3. No deduplication after concat across multiple CSVs.
-#    HDB data released in overlapping batches may produce duplicate rows.
-#    Fix: df.drop_duplicates() after concat, before any transforms.
-#
-# 4. rename_columns() mutates in place and returns None — inconsistent
-#    with every other transform function which returns a DataFrame.
-#    Fix: return df, or apply the rename inline in clean().
-#
-# 5. df.apply(calc_remaining_lease, axis=1) is row-by-row Python — slow
-#    on 150k rows. Acceptable for a one-time ingestion script.
+# TODO(deferred):
+# 1. df.apply(calc_remaining_lease, axis=1) is row-by-row Python — slow
+#    on large data. Acceptable for a one-time ingestion script.
 #    Fix: vectorise using pandas column arithmetic if speed becomes an issue.
+
+# HDB Data:
+#   1. No remaining lease in 1990-2014 data.
+#   2. Remaining lease in 2015-2016 data does not have 'years' and 'months' text as in 2017+ data.
+#   3. The CSV file cover separate date ranged with no overlap (checked in Oct 2026). Only one file should be loaded for each date range.
+#   2017+ file is currently in data/raw.
 
 import pandas as pd
 import glob
@@ -80,18 +69,18 @@ def split_remaining_lease(df: pd.DataFrame) -> pd.DataFrame:
     
     return df.drop(columns=['remaining_lease'])
 
-def rename_columns(df: pd.DataFrame) -> None:
-    df.rename(columns={"lease_commence_date": "lease_commence_year"}, inplace=True)
+def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
+    return df.rename(columns={"lease_commence_date": "lease_commence_year"})
 
 def clean(data_dir: str) -> pd.DataFrame:
     df = load_csvs(data_dir)
     logger.info(f"Loaded {len(df):,} rows")
 
-    df['remaining_lease'] = df.apply(calc_remaining_lease, axis=1)
     validate_month_format(df)
+    df['remaining_lease'] = df.apply(calc_remaining_lease, axis=1)
     df = split_month(df)
     df = split_remaining_lease(df)
-    rename_columns(df)
+    df = rename_columns(df)
 
     logger.info(f"Cleaning complete. {len(df):,} rows ready.")
     return df
